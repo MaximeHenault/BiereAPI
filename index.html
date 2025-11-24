@@ -139,6 +139,27 @@
           console.log("Erreur lors de l'enregistrement du Service Worker.", error);
       });
   }
+
+
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Empêche Chrome d'afficher la barre d'installation par défaut
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Affiche le bouton
+    const installBtn = document.getElementById('install');
+    installBtn.style.display = 'block';
+    
+    installBtn.addEventListener('click', async () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`L'utilisateur a choisi : ${outcome}`);
+      deferredPrompt = null;
+    });
+  });
     </script>
 </body>
 </html>
