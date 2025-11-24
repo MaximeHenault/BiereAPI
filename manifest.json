@@ -1,25 +1,20 @@
 {
-  "name": "Like Beer — Beer List",
-  "short_name": "LikeBeer",
-  "description": "Une petite PWA pour lister et ajouter des bières artisanales.",
+  "name": "Bière API",
+  "short_name": "BiereAPI",
   "start_url": "/BiereAPI/index.html",
-  "scope": "/BiereAPI/",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#f8f3e7",
-  "theme_color": "#d99f6b",
-  "categories": ["food", "lifestyle"],
+  "theme_color": "#d89b5a",
   "icons": [
     {
-      "src": "/BiereAPI/icons/beer_icon_192x192.png",
+      "src": "/BiereAPI/icons/192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/BiereAPI/icons/beer_icon_512x512.png",
+      "src": "/BiereAPI/icons/512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "prefer_related_applications": false
+  ]
 }

@@ -1,161 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="/BiereAPI/manifest.json">
-  <link rel="stylesheet" href="/BiereAPI/styles.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <title>Beer List</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bière API 🍺</title>
+
+    <link rel="stylesheet" href="/BiereAPI/styles.css">
+
+    <link rel="manifest" href="/BiereAPI/manifest.json">
+    <meta name="theme-color" content="#d89b5a">
 </head>
-
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">Like Beer</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="index.html">Home page</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="add-bear.html">Add beer</a>
-            </li>
-          </ul>
-          <form class="d-flex align-items-center">
-              <input type="text" class="form-control me-2 shadow-sm" id="searchInput"
-                    placeholder="🍺 Search a beer...">
-          </form>
-          <button id="install">Installe moi stp</button>
-        </div>
-      </div>
+
+    <nav class="navbar p-3">
+        <h2 class="mx-auto">Catalogue de Bières 🍺</h2>
     </nav>
-    <div class="container mt-5">
-      <h1>Home Page</h1>
-      <!-- Beer List -->
-      <div class="row" id="beerList"></div>
-    </div>
-    <div>
-      <button>Previous</button>
-      <p>1</p>
-      <button>Next</button>
+
+    <div class="container mt-4">
+
+        <input class="form-control mb-4" id="searchInput" placeholder="🔍 Recherche une bière...">
+
+        <div id="beerList" class="row g-4"></div>
+
+        <div class="pagination-container mt-4">
+            <button id="prevPage" class="pagination-btn">⟨ Précédent</button>
+            <span id="pageNumber" class="page-number">1</span>
+            <button id="nextPage" class="pagination-btn">Suivant ⟩</button>
+        </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"></script>
-      <script src="/BiereAPI/app.js"></script>
+    <script src="/BiereAPI/app.js"></script>
+
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/BiereAPI/sw.js')
-          .then(() => console.log('SW OK'))
-          .catch(err => console.error(err));
-      }
-
-      let deferredPrompt;
-      const installBtn = document.getElementById('install');
-      installBtn.style.display = 'none';
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.style.display = 'block';
-      });
-
-      installBtn.addEventListener('click', async () => {
-        installBtn.style.display = 'none';
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const choice = await deferredPrompt.userChoice;
-          console.log('Install outcome: ', choice.outcome);
-          deferredPrompt = null;
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/BiereAPI/service-worker.js");
         }
-      });
-
-
-      window.addEventListener("load", async (event) => {
-      /**************************
-       ***         MODEL
-      ***************************/
-      // Initialisation de la base de données
-      const db = await initDB();
-
-      async function initDB() {
-        console.log("creation de la db");
-        return new Promise((resolve, reject) => {
-          
-          const request = indexedDB.open('BeerDB', 1);
-          request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            const store = db.createObjectStore('beers', { keyPath: 'id' });
-            store.createIndex('name', 'name', { unique: false });
-          };
-
-          request.onsuccess = (event) => {
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            reject('Error opening IndexedDB');
-          };
-        });
-      }
-
-      // Fonction pour ajouter une bière à la base de données
-      async function addToDB(beer) {
-        const transaction = db.transaction(['beers'], 'readwrite');
-        const store = transaction.objectStore('beers');
-        await store.add(beer);
-      }
-
-      // Fonction pour récupérer les bières depuis la base de données
-      async function getBeersFromDB() {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(['beers'], 'readonly');
-          const store = transaction.objectStore('beers');
-          const request = store.getAll();
-
-          request.onsuccess = (event) => {
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            reject('Error fetching beers from IndexedDB');
-          };
-        });
-      }
-
-      // Function to fetch beers from Punk API
-      async function modelFetchBeers(id) {
-        // Essayer de récupérer les bières depuis la base de données
-        try {
-          beers = await getBeersFromDB();
-
-          // Si la base de données est vide, récupérer depuis l'API et ajouter à la base de données
-          if (beers.length === 0) {
-            beers = await fetch(`https://punkapi.online/v3/beers?page=${id}`)
-              .then(response => response.json())
-              .then(data => {
-                data.forEach(async (beer) => {
-                  await addToDB(beer);
-                });
-                return data;
-              })
-              .catch(error => console.error('Error fetching beers:', error));
-          }
-
-          displayBeers(beers);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      // Ajoutez control si nécessaire puis appelez le modèle
-      modelFetchBeers(1);
-    });
     </script>
+
 </body>
 </html>

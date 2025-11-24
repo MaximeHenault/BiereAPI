@@ -1,22 +1,29 @@
+/* --- Global --- */
 body {
     background: linear-gradient(135deg, #f8f3e7, #e9dccc);
+    min-height: 100vh;
+    font-family: "Segoe UI", sans-serif;
 }
 
+/* --- Navbar --- */
 .navbar {
     backdrop-filter: blur(5px);
     background: rgba(255,255,255,0.7) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+/* --- Beer cards --- */
 .beer-card {
-    border-radius: 20px;
+    border-radius: 16px;
     transition: transform 0.25s, box-shadow 0.25s;
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    padding: 20px;
 }
 
 .beer-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.15);
 }
 
 .beer-img {
@@ -26,7 +33,7 @@ body {
 }
 
 .beer-card:hover .beer-img {
-    transform: scale(1.1) rotate(-2deg);
+    transform: scale(1.08) rotate(-1.5deg);
 }
 
 .beer-desc {
@@ -34,12 +41,37 @@ body {
     opacity: 0.85;
 }
 
-form {
-    max-width: 500px;
-    margin: auto;
+/* --- Pagination --- */
+.pagination-container {
+    margin: 40px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
 }
 
-#SuccessId {
-    margin-top: 10px;
+.pagination-btn {
+    padding: 8px 16px;
+    border: none;
+    background: #d99f6b;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.pagination-btn:hover {
+    background: #c98546;
+    cursor: pointer;
+    transform: translateY(-2px);
+}
+
+.pagination-btn:disabled {
+    background: #a5a5a5;
+    cursor: not-allowed;
+}
+
+.page-number {
+    font-size: 1.3rem;
     font-weight: bold;
 }

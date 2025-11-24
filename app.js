@@ -1,57 +1,78 @@
-var beers;
-/**************************
-***         MODEL
-***************************/
-      // Function to fetch beers from Punk API
-      async function modelFetchBeers(id) {
-        beers = await fetch(`https://punkapi.online/v3/beers?page=${id}`)
-          .then(response => response.json())
-          .then(data => displayBeers(data))
-          .catch(error => console.error('Error fetching beers:', error));
-      }
-/**************************
-  ***         VIEW
-  ***************************/
-      // function ECMA 6 represent the view template
-      var template = (beer) => `
-        <div class="col-md-4 mb-4">
-          <div class="beer-card card shadow-lg border-0 p-3">
-              <div class="text-center">
-                  <img src="https://punkapi.online/v3/images/${beer.image}"
-                      class="beer-img mb-3"
-                      alt="${beer.name}">
-              </div>
+let beers = [];
+let currentPage = 1;
 
-              <span class="badge bg-warning text-dark mb-2">${beer.tagline ?? "No tagline"}</span>
-
-              <h5 class="fw-bold">${beer.name}</h5>
-
-              <p class="beer-desc">
-                  ${beer.description?.slice(0,120) ?? ""}...
-              </p>
-          </div>
+/* ----------------------------
+   TEMPLATE HTML POUR UNE BIÈRE
+----------------------------- */
+function template(beer) {
+    return `
+    <div class="col-md-4">
+        <div class="beer-card shadow-sm">
+            <h4>${beer.name}</h4>
+            <img src="${beer.image_url}" class="beer-img d-block mx-auto" alt="beer">
+            <p class="beer-desc mt-3">${beer.description.substring(0, 100)}...</p>
         </div>
-        `;
+    </div>`;
+}
 
-      /**************************
-      ***         CONTROLLER
-      ***************************/
-      // Function to display beers on the page
-      function displayBeers(beers) {
-        const beerList = document.getElementById('beerList');
-        beerList.innerHTML = '';
-        beers.forEach(beer => {
-          beerList.innerHTML += template(beer);
-        });
-        return beers;
-      }
-      // Function to filter beers based on search input
-      function filterBeers() {
-        const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        const filteredBeers = beers.filter(beer => beer.name.toLowerCase().includes(searchInput));
-        displayBeers(filteredBeers);
-      }
-       // Event listener for search input
-      document.getElementById('searchInput').addEventListener('input', filterBeers);
-   
-      
+/* ----------------------------
+   AFFICHAGE DES BIÈRES
+----------------------------- */
+function displayBeers(beers) {
+    const beerList = document.getElementById('beerList');
+    beerList.innerHTML = '';
+    beers.forEach(beer => {
+        beerList.innerHTML += template(beer);
+    });
+}
+
+/* ----------------------------
+   RÉCUPÉRATION API AVEC PAGE
+----------------------------- */
+async function modelFetchBeers(page = 1) {
+    const response = await fetch(`https://punkapi.online/v3/beers?page=${page}`);
+    beers = await response.json();
+    displayBeers(beers);
+    updatePaginationButtons();
+}
+
+/* ----------------------------
+   RECHERCHE EN DIRECT
+----------------------------- */
+function filterBeers() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = beers.filter(b => b.name.toLowerCase().includes(search));
+    displayBeers(filtered);
+}
+
+document.getElementById("searchInput").addEventListener("input", filterBeers);
+
+/* ----------------------------
+   PAGINATION
+----------------------------- */
+const prevBtn = document.getElementById("prevPage");
+const nextBtn = document.getElementById("nextPage");
+const pageSpan = document.getElementById("pageNumber");
+
+prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        pageSpan.textContent = currentPage;
+        modelFetchBeers(currentPage);
+    }
+});
+
+nextBtn.addEventListener("click", () => {
+    currentPage++;
+    pageSpan.textContent = currentPage;
+    modelFetchBeers(currentPage);
+});
+
+function updatePaginationButtons() {
+    prevBtn.disabled = currentPage === 1;
+}
+
+/* ----------------------------
+   CHARGEMENT INITIAL
+----------------------------- */
+modelFetchBeers(1);
