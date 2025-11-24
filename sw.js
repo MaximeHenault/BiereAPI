@@ -4,9 +4,9 @@ const CACHE_NAME = 'my-blank-pwa-cache-v1';
 
 const RESOURCES_TO_CACHE = [
   './',
-  './index.html',
-  './styles.css',
-  './app.js'
+  '/BiereAPI/index.html',
+  '/BiereAPI/styles.css',
+  '/BiereAPI/app.js'
 ];
 
 // Install SW + cache static files

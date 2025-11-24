@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="/BiereAPI/manifest.json">
+  <link rel="stylesheet" href="/BiereAPI/styles.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <title>Beer List</title>
@@ -48,8 +48,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"></script>
-      <script src="app.js"></script>
+      <script src="/BiereAPI/app.js"></script>
     <script>
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(() => console.log('SW OK'))
+          .catch(err => console.error(err));
+      }
+
+      let deferredPrompt;
+      const installBtn = document.getElementById('install');
+      installBtn.style.display = 'none';
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+      });
+
+      installBtn.addEventListener('click', async () => {
+        installBtn.style.display = 'none';
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const choice = await deferredPrompt.userChoice;
+          console.log('Install outcome: ', choice.outcome);
+          deferredPrompt = null;
+        }
+      });
+
       window.addEventListener("load", async (event) => {
       /**************************
        ***         MODEL
@@ -129,37 +156,6 @@
       // Ajoutez control si nécessaire puis appelez le modèle
       modelFetchBeers(1);
     });
-
-  if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-          console.log('Service Worker enregistré avec succès.', registration);
-      })
-      .catch(error => {
-          console.log("Erreur lors de l'enregistrement du Service Worker.", error);
-      });
-  }
-
-
-  let deferredPrompt;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    // Empêche Chrome d'afficher la barre d'installation par défaut
-    e.preventDefault();
-    deferredPrompt = e;
-
-    // Affiche le bouton
-    const installBtn = document.getElementById('install');
-    installBtn.style.display = 'block';
-    
-    installBtn.addEventListener('click', async () => {
-      installBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`L'utilisateur a choisi : ${outcome}`);
-      deferredPrompt = null;
-    });
-  });
     </script>
 </body>
 </html>
