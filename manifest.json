@@ -7,12 +7,12 @@
   "theme_color": "#d89b5a",
   "icons": [
     {
-      "src": "/BiereAPI/icons/192.png",
+      "src": "/BiereAPI/icons/beer_icon_192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/BiereAPI/icons/512.png",
+      "src": "/BiereAPI/icons/beer_icon_512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
