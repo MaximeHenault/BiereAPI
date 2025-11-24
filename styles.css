@@ -1,0 +1,45 @@
+body {
+    background: linear-gradient(135deg, #f8f3e7, #e9dccc);
+}
+
+.navbar {
+    backdrop-filter: blur(5px);
+    background: rgba(255,255,255,0.7) !important;
+}
+
+.beer-card {
+    border-radius: 20px;
+    transition: transform 0.25s, box-shadow 0.25s;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(10px);
+}
+
+.beer-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+}
+
+.beer-img {
+    height: 220px;
+    width: auto;
+    transition: transform 0.3s;
+}
+
+.beer-card:hover .beer-img {
+    transform: scale(1.1) rotate(-2deg);
+}
+
+.beer-desc {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+form {
+    max-width: 500px;
+    margin: auto;
+}
+
+#SuccessId {
+    margin-top: 10px;
+    font-weight: bold;
+}

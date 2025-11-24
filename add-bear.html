@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <title>Add Beer</title>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Like Beer</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Home page</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="add-bear.html">Add beer</a>
+            </li>
+          </ul>
+          <form class="d-flex align-items-center">
+              <input type="text" class="form-control me-2 shadow-sm" id="searchInput"
+                    placeholder="🍺 Search a beer...">
+          </form>
+
+        </div>
+      </div>
+    </nav>
+    <div>
+    <h1 class="text-center mt-4 mb-4 fw-bold">🍺 Add Your Own Craft Beer</h1>
+        <form>
+            <div class="mb-3 form-check">
+                <label for="NameInput" class="form-label">Name</label>
+                <input type="text" class="form-control" id="NameInput" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 form-check">
+                <label for="TaglineInput" class="form-label">Tagline</label>
+                <input type="text" class="form-control" id="TaglineInput">
+            </div>
+            <div class="mb-3 form-check">
+                <label for="DescriptionInput" class="form-label">Description</label>
+                <input type="text" class="form-control" id="DescriptionInput">
+            </div>
+            <button type="submit" class="btn btn-primary ml-2" id="SendButton">Submit</button>
+            <div id="SuccessId"></div>
+        </form>
+    </div>
+    <script src="app.js"></script>
+    <script>
+    class Beer{
+        constructor(aname, atagline, adescription){
+            this.name = aname;
+            this.tagline = atagline
+            this.description = adescription
+            this.image = "001.png";
+        }
+    }
+
+    let db = null;
+
+    async function initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('BeerDB', 1);
+            request.onupgradeneeded = (event) => {
+                const _db = event.target.result;
+                if (!_db.objectStoreNames.contains('beers')) {
+                    _db.createObjectStore('beers', { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                resolve(db);
+            };
+            request.onerror = () => reject('Error opening IndexedDB');
+        });
+    }
+
+    function addToDB(beer) {
+        return new Promise((resolve, reject) => {
+            if (!db) return reject('DB not initialized');
+            const transaction = db.transaction(['beers'], 'readwrite');
+            const store = transaction.objectStore('beers');
+            const req = store.add(beer);
+            req.onsuccess = () => resolve();
+            req.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            await initDB();
+        } catch (err) {
+            console.error('Failed to init DB:', err);
+        }
+    });
+
+    const success = document.getElementById("SuccessId");
+    const button = document.getElementById("SendButton");
+    button.addEventListener("click", async event => {
+        event.preventDefault(); // éviter le comportement submit qui recharge la page
+
+        const EnterName = document.getElementById("NameInput").value.trim();
+        const EnterTagline = document.getElementById("TaglineInput").value.trim();
+        const EnterDescription = document.getElementById("DescriptionInput").value.trim();
+
+        if (!EnterName) {
+            success.textContent = "Le nom est requis.";
+            return;
+        }
+
+        const beer1 = new Beer(EnterName, EnterTagline, EnterDescription);
+        // générer un id unique (crypto.randomUUID si disponible)
+        beer1.id = (crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString();
+
+        try {
+            await addToDB(beer1);
+            success.textContent = "Votre bière a bien été ajoutée à la BDD.";
+            // vider le formulaire
+            document.getElementById("NameInput").value = '';
+            document.getElementById("TaglineInput").value = '';
+            document.getElementById("DescriptionInput").value = '';
+        } catch (err) {
+            console.error('Add failed', err);
+            success.textContent = "Erreur lors de l'ajout : " + err;
+        }
+    });
+    </script>
+</body>

@@ -1,0 +1,26 @@
+{
+    "name": "Like Beer — Beer List",
+    "short_name": "LikeBeer",
+    "description": "Une petite PWA pour lister et ajouter des bières artisanales.",
+    "start_url": "/index.html",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#f8f3e7",
+    "theme_color": "#d99f6b",
+    "categories": ["food", "lifestyle"],
+    "icons": [
+    {
+        "src": "/icons/beer_icon_192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "form_factor": "wide"
+    },
+    {
+        "src": "/icons/beer_icon_512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }
+    ],
+    "prefer_related_applications": false
+}
