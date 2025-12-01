@@ -18,7 +18,7 @@ var beers;
         <div class="col-md-4 mb-4">
           <div class="beer-card card shadow-lg border-0 p-3">
               <div class="text-center">
-                  <img src="https://punkapi.online/v3/images/${beer.image}"
+                  <img src="https://punkapi.online/v3/images/${beer.image_url}"
                       class="beer-img mb-3"
                       alt="${beer.name}">
               </div>
@@ -40,8 +40,7 @@ var beers;
       // Function to display beers on the page
       function displayBeers(beers) {
         const beerList = document.getElementById('beerList');
-        beerList.innerHTML = ''; 
-        console.log(beers);
+        beerList.innerHTML = '';
         beers.forEach(beer => {
           beerList.innerHTML += template(beer);
         });
