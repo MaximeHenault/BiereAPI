@@ -13,7 +13,9 @@ var beers;
   ***         VIEW
   ***************************/
       // function ECMA 6 represent the view template
-      var template = (beer) => `
+      var template = (beer) => 
+        console.log(beer);
+        `
         <div class="col-md-4 mb-4">
           <div class="beer-card card shadow-lg border-0 p-3">
               <div class="text-center">
@@ -41,7 +43,6 @@ var beers;
         const beerList = document.getElementById('beerList');
         beerList.innerHTML = '';  
         beers.forEach(beer => {
-          console.log(beer)
           beerList.innerHTML += template(beer);
         });
         return beers;
