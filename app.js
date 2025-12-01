@@ -39,8 +39,9 @@ var beers;
       // Function to display beers on the page
       function displayBeers(beers) {
         const beerList = document.getElementById('beerList');
-        beerList.innerHTML = '';
+        beerList.innerHTML = '';  
         beers.forEach(beer => {
+          console.log(beer)
           beerList.innerHTML += template(beer);
         });
         return beers;
